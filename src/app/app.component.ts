@@ -66,6 +66,22 @@ export class AppComponent {
     }
   }
 
+
+  formatNumberWithCommas(number: number): string {
+    // Convert the number to a string and split it into integer and decimal parts
+    const [integerPart, decimalPart] = number.toString().split('.');
+
+    // Add commas to the integer part
+    const formattedIntegerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    // Combine the integer part and decimal part (if exists)
+    const formattedNumber = decimalPart
+        ? `${formattedIntegerPart}.${decimalPart}`
+        : formattedIntegerPart;
+
+    return formattedNumber;
+}
+
   extractDistinctRegions(): void {
     // Use a Set to store unique regions
     const uniqueRegions = new Set<string>();

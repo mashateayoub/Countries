@@ -28,7 +28,8 @@
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <i class="w-4 h-4 text-gray-500 dark:text-gray-400 fa fa-search"></i>
                     </div>
-                    <input id="searchInput" type="text" [ngModelOptions]="{standalone: true}" [(ngModel)]="this.searchTerm" (input)="filterByName()"
+                    <input id="searchInput" type="text" [ngModelOptions]="{standalone: true}"
+                        [(ngModel)]="this.searchTerm" (input)="filterByName()"
                         class="shadow-md shadow-gray-500 dark:shadow-md dark:shadow-cyan-600 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full md:w-4/12 ps-10 p-2.5  dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500"
                         placeholder="Search country name..." required>
                 </div>
@@ -59,13 +60,14 @@
                     <a href="https://en.wikipedia.org/wiki/{{item.name.official}}">
                         <img class="rounded-t-lg max-h-36 w-full" src="{{item.flags.png}}" alt="" />
                     </a>
-                    <div class="p-5">
+                    <div class="p-5 text-sm">
                         <a href="https://en.wikipedia.org/wiki/{{item.name.official}}">
                             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                 {{item.flag}} |
                                 {{item.name.official}}</h5>
-
-                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{item.region}}</p>
+                            <p class="font-normal text-gray-700 dark:text-gray-400"><strong>Capital : </strong> {{item.capital}}</p>
+                            <p class="font-normal text-gray-700 dark:text-gray-400"><strong>Population : </strong> {{this.formatNumberWithCommas(item.population)}}</p>
+                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><strong>Region : </strong>{{item.region}}</p>
                         </a>
                     </div>
                 </div>
