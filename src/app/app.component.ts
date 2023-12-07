@@ -51,7 +51,7 @@ export class AppComponent {
       if (this.searchTerm == "") {
         this.filterByRegion();
       } else {
-        this.filteredCountryData = (this.filteredCountryData as any[]).filter(country => {
+        this.filteredCountryData = (this.countryData as any[]).filter(country => {
           let searchTermLower = (this.searchTerm as String).toLowerCase();
           return (
             country.name &&
