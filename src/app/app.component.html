@@ -1,277 +1,105 @@
-<div class=" dark:bg-slate-700  dark:text-white min-h-screen bg-slate-50">
+<div class="mat-app-background min-h-screen flex flex-col">
+  <mat-toolbar color="primary">
+    <a href="/" class="flex items-center">
+      <img src="favicon.ico" width="46" />
+      <span class="ml-4 hidden sm:block">Where in the World?</span>
+    </a>
+    <span class="flex-1"></span>
+    <button mat-icon-button (click)="darkMode.set(!darkMode())">
+      <mat-icon>{{darkMode() ? 'light_mode' : 'dark_mode'}}</mat-icon>
+    </button>
+  </mat-toolbar>
 
+  <div class="p-6 flex-grow">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+      <h1 class="text-2xl font-bold">{{getTitle()}}</h1>
+      
+      <div class="filters-container flex flex-col sm:flex-row gap-4 p-4">
+        <!-- Search -->
+        <mat-form-field class="w-full sm:w-64">
+          <mat-label>Search country name...</mat-label>
+          <input matInput [(ngModel)]="searchTerm" (input)="filterByName()">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
 
-    <nav
-        class="z-50 top-0 sticky bg-slate-200 dark:bg-gray-800 border-gray-200  drop-shadow-lg  px-24 md:px-8 sm:px-16 lg:px-48 ">
-        <div class="max-w-full flex flex-wrap items-center justify-between mx-auto py-4">
-            <a href="/" class="flex flex-row items-center rtl:space-x-reverse">
-                <img src="favicon.ico" width="46" />
-                <span class="self-center text-3xl font-semibold whitespace-nowrap pl-4 hidden sm:flex"> Where in the
-                    World ?</span>
-            </a>
-            <div class="px-8 flex-row items-center" id="navbar-default">
-                <button class="flex transition-transform hover:scale-125" (click)="darkMode.set(!darkMode())">
-                    <i *ngIf="!darkMode()" class="fa fa-moon" aria-hidden="true"></i>
-                    <i *ngIf="darkMode()" class="fa fa-sun" aria-hidden="true"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
+        <!-- Region -->
+        <mat-form-field class="w-full sm:w-48">
+          <mat-label>Region</mat-label>
+          <mat-select [(ngModel)]="selectedRegion" (selectionChange)="filterByRegion()">
+            <mat-option value="">All regions</mat-option>
+            <mat-option *ngFor="let region of regionData" [value]="region">
+              {{region}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-    <div class="flex flex-col justify-center items-center">
-        <div class="w-full ">
+        <!-- Population Range -->
+        <mat-form-field class="w-full sm:w-48">
+          <mat-label>Population</mat-label>
+          <mat-select multiple [(ngModel)]="filterOptions.populationRange" (selectionChange)="filterCountries()">
+            <mat-option [value]="{min: 0, max: 1000000}">< 1M</mat-option>
+            <mat-option [value]="{min: 1000000, max: 10000000}">1M - 10M</mat-option>
+            <mat-option [value]="{min: 10000000, max: 50000000}">10M - 50M</mat-option>
+            <mat-option [value]="{min: 50000000, max: 100000000}">50M - 100M</mat-option>
+            <mat-option [value]="{min: 100000000, max: MAX_SAFE_INTEGER}">> 100M</mat-option>
+          </mat-select>
+        </mat-form-field>
 
-            <form #f="ngForm"
-                class="px-24 md:px-8 sm:px-16 lg:px-48 flex flex-col sm:flex-row  justify-between items-center  max-h-24 align-center py-8 ">
+        <!-- Languages -->
+        <mat-form-field class="w-full sm:w-48">
+          <mat-label>Languages</mat-label>
+          <mat-select multiple [(ngModel)]="filterOptions.languages" (selectionChange)="filterCountries()">
+            <mat-option *ngFor="let lang of availableLanguages" [value]="lang">
+              {{lang}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-                <div class="relative w-full">
-                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <i class="w-4 h-4 text-gray-500 dark:text-gray-400 fa fa-search"></i>
-                    </div>
-                    <input id="searchInput" type="text" [ngModelOptions]="{standalone: true}"
-                        [(ngModel)]="this.searchTerm" (input)="filterByName()"
-                        class="shadow-md shadow-gray-500 dark:shadow-md dark:shadow-cyan-600 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full md:w-4/12 ps-10 p-2.5  dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500"
-                        placeholder="Search country name..." required>
-                </div>
-
-                <select
-                    class="bg-gray-50 border shadow-md shadow-gray-500 dark:shadow-md dark:shadow-cyan-600 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-60 p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500"
-                    id="regionFilter" [(ngModel)]="this.selectedRegion" name="valueCheck"
-                    (change)="this.filterByRegion()" aria-placeholder="Region" title="Region">
-                    <option value="">All regions</option>
-                    <option *ngFor="let obj of this.regionData" [ngValue]="obj" [selected]="obj == this.selectedRegion">
-                        {{obj}}
-                    </option>
-                </select>
-
-            </form>
-
-
-
-        </div>
-
-        <div
-            class="px-24 md:px-8 sm:px-16 lg:px-48 grid gap-x-2 lg:gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  align-center py-8 ">
-
-            <ng-template ngFor let-item [ngForOf]="this.filteredCountryData" let-i="index">
-
-                <div
-                    class="mb-8 sm:mb-8 md:mb-0 max-w-sm bg-slate-50 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:shadow-lg dark:hover:shadow-md dark:hover:shadow-cyan-600 ">
-                    <a href="https://en.wikipedia.org/wiki/{{item.name.official}}">
-                        <img class="rounded-t-lg max-h-36 w-full" src="{{item.flags.png}}" alt="" />
-                    </a>
-                    <div class="p-5 text-sm">
-                        <a href="https://en.wikipedia.org/wiki/{{item.name.official}}">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                {{item.flag}} |
-                                {{item.name.official}}</h5>
-                            <p class="font-normal text-gray-700 dark:text-gray-400"><strong>Capital : </strong> {{item.capital}}</p>
-                            <p class="font-normal text-gray-700 dark:text-gray-400"><strong>Population : </strong> {{this.formatNumberWithCommas(item.population)}}</p>
-                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><strong>Region : </strong>{{item.region}}</p>
-                        </a>
-                    </div>
-                </div>
-            </ng-template>
-
-        </div>
+        <!-- Currencies -->
+        <mat-form-field class="w-full sm:w-48">
+          <mat-label>Currencies</mat-label>
+          <mat-select multiple [(ngModel)]="filterOptions.currencies" (selectionChange)="filterCountries()">
+            <mat-option *ngFor="let currency of availableCurrencies" [value]="currency">
+              {{currency}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
 
+    <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <mat-card *ngFor="let item of filteredCountryData; let i = index" 
+                class="hover:shadow-lg cursor-pointer"
+                [class.selected-card]="i === keyboardNav.getSelectedIndex()"
+                (click)="openCountryDetails(item)">
+        <div class="flag-container h-48 overflow-hidden">
+          <img [appLazyLoad]="item.flags.png" 
+               [alt]="item.name.official" 
+               class="w-full h-full object-cover"
+               loading="lazy">
+        </div>
+        <mat-card-content>
+          <h2 class="text-xl font-bold mb-2">{{item.flag}} {{item.name.official}}</h2>
+          <p><strong>Capital:</strong> {{item.capital}}</p>
+          <p><strong>Population:</strong> {{formatNumberWithCommas(item.population)}}</p>
+          <p><strong>Region:</strong> {{item.region}}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Add this no results message -->
+    <div *ngIf="filteredCountryData?.length === 0" 
+         class="flex flex-col items-center justify-center p-8 text-center">
+      <h2 class="text-2xl font-bold mb-2">No Countries Found</h2>
+      <p class="text-gray-600 dark:text-gray-400">
+        Try adjusting your search criteria or filters
+      </p>
+      <button mat-raised-button color="primary" class="mt-4" (click)="clearFilters()">
+        <mat-icon>refresh</mat-icon>
+        Clear All Filters
+      </button>
+    </div>
+  </div>
+
+  <app-footer [showOverlay]="isScrolling && isScrollingDown && currentPage * pageSize < (filteredCountryData?.length || countryData.length)"></app-footer>
 </div>
-
-
-<!-- {
-    "name": {
-        "common": "Christmas Island",
-        "official": "Territory of Christmas Island",
-        "nativeName": {
-            "eng": {
-                "official": "Territory of Christmas Island",
-                "common": "Christmas Island"
-            }
-        }
-    },
-    "tld": [
-        ".cx"
-    ],
-    "cca2": "CX",
-    "ccn3": "162",
-    "cca3": "CXR",
-    "independent": false,
-    "status": "officially-assigned",
-    "unMember": false,
-    "currencies": {
-        "AUD": {
-            "name": "Australian dollar",
-            "symbol": "$"
-        }
-    },
-    "idd": {
-        "root": "+6",
-        "suffixes": [
-            "1"
-        ]
-    },
-    "capital": [
-        "Flying Fish Cove"
-    ],
-    "altSpellings": [
-        "CX",
-        "Territory of Christmas Island"
-    ],
-    "region": "Oceania",
-    "subregion": "Australia and New Zealand",
-    "languages": {
-        "eng": "English"
-    },
-    "translations": {
-        "ara": {
-            "official": "جزيرة كريسماس",
-            "common": "جزيرة كريسماس"
-        },
-        "bre": {
-            "official": "Tiriad Enez Christmas",
-            "common": "Enez Christmas"
-        },
-        "ces": {
-            "official": "Teritorium Vánočního ostrova",
-            "common": "Vánoční ostrov"
-        },
-        "cym": {
-            "official": "Tiriogaeth yr Ynys y Nadolig",
-            "common": "Ynys y Nadolig"
-        },
-        "deu": {
-            "official": "Gebiet der Weihnachtsinsel",
-            "common": "Weihnachtsinsel"
-        },
-        "est": {
-            "official": "Jõulusaare ala",
-            "common": "Jõulusaar"
-        },
-        "fin": {
-            "official": "Joulusaaren alue",
-            "common": "Joulusaari"
-        },
-        "fra": {
-            "official": "Territoire de l'île Christmas",
-            "common": "Île Christmas"
-        },
-        "hrv": {
-            "official": "Teritorij Božićni otok",
-            "common": "Božićni otok"
-        },
-        "hun": {
-            "official": "Karácsony-sziget",
-            "common": "Karácsony-sziget"
-        },
-        "ita": {
-            "official": "Territorio di Christmas Island",
-            "common": "Isola di Natale"
-        },
-        "jpn": {
-            "official": "クリスマス島の領土",
-            "common": "クリスマス島"
-        },
-        "kor": {
-            "official": "크리스마스 섬",
-            "common": "크리스마스 섬"
-        },
-        "nld": {
-            "official": "Grondgebied van Christmas Island",
-            "common": "Christmaseiland"
-        },
-        "per": {
-            "official": "جزیرهٔ کریسمس",
-            "common": "جزیرهٔ کریسمس"
-        },
-        "pol": {
-            "official": "Wyspa Bożego Narodzenia",
-            "common": "Wyspa Bożego Narodzenia"
-        },
-        "por": {
-            "official": "Território da Ilha Christmas",
-            "common": "Ilha do Natal"
-        },
-        "rus": {
-            "official": "Территория острова Рождества",
-            "common": "Остров Рождества"
-        },
-        "slk": {
-            "official": "Teritórium Vianočného ostrova",
-            "common": "Vianočnú ostrov"
-        },
-        "spa": {
-            "official": "Territorio de la Isla de Navidad",
-            "common": "Isla de Navidad"
-        },
-        "srp": {
-            "official": "Божићно Острво",
-            "common": "Божићно Острво"
-        },
-        "swe": {
-            "official": "Julön",
-            "common": "Julön"
-        },
-        "tur": {
-            "official": "Christmas Adası",
-            "common": "Christmas Adası"
-        },
-        "urd": {
-            "official": "ریاستِ جزیرہ کرسمس",
-            "common": "جزیرہ کرسمس"
-        },
-        "zho": {
-            "official": "圣诞岛",
-            "common": "圣诞岛"
-        }
-    },
-    "latlng": [
-        -10.5,
-        105.66666666
-    ],
-    "landlocked": false,
-    "area": 135,
-    "demonyms": {
-        "eng": {
-            "f": "Christmas Islander",
-            "m": "Christmas Islander"
-        }
-    },
-    "flag": "🇨🇽",
-    "maps": {
-        "googleMaps": "https://goo.gl/maps/ZC17hHsQZpShN5wk9",
-        "openStreetMaps": "https://www.openstreetmap.org/relation/6365444"
-    },
-    "population": 2072,
-    "car": {
-        "signs": [
-            "AUS"
-        ],
-        "side": "left"
-    },
-    "timezones": [
-        "UTC+07:00"
-    ],
-    "continents": [
-        "Asia"
-    ],
-    "flags": {
-        "png": "https://flagcdn.com/w320/cx.png",
-        "svg": "https://flagcdn.com/cx.svg"
-    },
-    "coatOfArms": {
-        "png": "https://mainfacts.com/media/images/coats_of_arms/cx.png",
-        "svg": "https://mainfacts.com/media/images/coats_of_arms/cx.svg"
-    },
-    "startOfWeek": "monday",
-    "capitalInfo": {
-        "latlng": [
-            -10.42,
-            105.68
-        ]
-    },
-    "postalCode": {
-        "format": "####",
-        "regex": "^(\\d{4})$"
-    }
-} -->
