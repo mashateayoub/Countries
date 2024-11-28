@@ -1,0 +1,128 @@
+@use '@angular/material' as mat;
+@include mat.core();
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Define custom palettes
+$custom-blue-palette: (
+  50: #e3f2fd,
+  100: #bbdefb,
+  200: #90caf9,
+  300: #64b5f6,
+  400: #42a5f5,
+  500: #2196f3,  // Main ocean blue color
+  600: #1e88e5,
+  700: #1976d2,
+  800: #1565c0,
+  900: #0d47a1,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+  )
+);
+
+$my-primary: mat.define-palette($custom-blue-palette, 500);
+$my-accent: mat.define-palette(mat.$grey-palette, 50);
+$my-warn: mat.define-palette(mat.$red-palette);
+
+$my-theme: mat.define-light-theme((
+ color: (
+   primary: $my-primary,
+   accent: $my-accent,
+   warn: $my-warn,
+ ),
+ typography: mat.define-typography-config(),
+ density: 0,
+));
+
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.mat-app-background {
+  min-height: 100vh;
+} 
+
+
+.dark {
+  @include mat.all-component-colors(mat.define-dark-theme((
+    color: (
+      primary: $my-primary,
+      accent: $my-accent,
+      warn: $my-warn,
+    )
+  )));
+}
+
+@include mat.all-component-themes($my-theme);
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.flag-container {
+  position: relative;
+  width: 100%;
+  background-color: #f0f0f0;
+}
+
+.mat-mdc-card-image {
+  margin: 0 !important;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.selected-card {
+  outline: 3px solid #2196f3 !important;
+  outline-offset: -3px;
+}
+
+.dark .selected-card {
+  outline-color: #64b5f6 !important;
+}
+
+.filters-container {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  flex-wrap: wrap;
+  
+  mat-form-field {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .filters-container {
+    flex-direction: column;
+    width: 100%;
+    
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+.dark .filters-container {
+  background: rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,18 @@
+@use '@angular/material' as mat;
+@include mat.core();
+
+// Use the same custom blue palette
+$Countries-primary: mat.define-palette($custom-blue-palette, 500);
+$Countries-accent: mat.define-palette(mat.$grey-palette, 50);
+$Countries-warn: mat.define-palette(mat.$red-palette);
+
+$Countries-theme: mat.define-light-theme((
+  color: (
+    primary: $Countries-primary,
+    accent: $Countries-accent,
+    warn: $Countries-warn,
+  )
+));
+
+@include mat.all-component-themes($Countries-theme);
+

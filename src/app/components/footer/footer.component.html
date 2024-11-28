@@ -1,0 +1,19 @@
+<div class="footer-container">
+  <mat-toolbar class="footer-toolbar" color="primary">
+    <div class="container mx-auto flex flex-col justify-center items-center">
+      <div class="text-center">
+        <span class="text-sm">
+          Made with <mat-icon class="text-red-500" inline>favorite</mat-icon> using 
+          <a href="https://angular.io" target="_blank" class="hover:underline">Angular</a> and 
+          <a href="https://material.angular.io" target="_blank" class="hover:underline">Angular Material</a>
+        </span>
+        <span class="text-xs opacity-75 block">© {{currentYear}} Where in the World. All rights reserved.</span>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <div *ngIf="true" class="overlay-loader" [class.visible]="showOverlay">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span class="mt-2">Loading more countries...</span>
+  </div>
+</div> 
