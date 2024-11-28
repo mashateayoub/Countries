@@ -36,7 +36,6 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Performance Features:
 - **Image Optimization**: Automatically optimizes and caches images for faster loading
 - **Lazy Loading**: Images are loaded only when they enter the viewport
-- **Performance Monitoring**: Tracks and displays key performance metrics
 - **Data Caching**: Implements intelligent caching for API responses
 - **Resource Management**: Automatically cleans up unused resources
 
