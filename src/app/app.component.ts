@@ -5,7 +5,6 @@ import { finalize } from 'rxjs/operators';
 import { FilterOptions } from './interfaces/filter-options.interface';
 import { ImageOptimizationService } from './services/image-optimization.service';
 import { KeyboardNavigationService } from './services/keyboard-navigation.service';
-import { PerformanceMonitorService } from './services/performance-monitor.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CountryDetailsDialogComponent } from './components/country-details-dialog/country-details-dialog.component';
 
@@ -54,7 +53,6 @@ export class AppComponent {
 
   constructor(
     private http: HttpClient,
-    private performanceMonitor: PerformanceMonitorService,
     private imageOptimizer: ImageOptimizationService,
     @Inject(PLATFORM_ID) private platformId: Object,
     public keyboardNav: KeyboardNavigationService,
@@ -68,7 +66,7 @@ export class AppComponent {
   @HostListener('window:scroll', ['$event'])
   onScroll(): void {
     if (isPlatformBrowser(this.platformId)) {
-      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      const currentScroll = window.scrollY || document.documentElement.scrollTop;
       this.isScrollingDown = currentScroll > this.lastScrollTop;
       this.isScrolling = true;
       
@@ -95,20 +93,13 @@ export class AppComponent {
     if (start < this.allCountryData.length) {
       this.countryData = [
         ...this.countryData,
-        ...this.allCountryData.slice(start, end)
       ];
       this.currentPage++;
       this.filterCountries();
     }
   }
 
-  filterByName(): void {
-    this.filterCountries();
-  }
 
-  filterByRegion(): void {
-    this.filterCountries();
-  }
 
   formatNumberWithCommas(number: number): string {
     // Convert the number to a string and split it into integer and decimal parts
@@ -141,10 +132,7 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
-    this.performanceMonitor.startMeasurement('fetchCountries');
-    this.http.get<any[]>('https://restcountries.com/v3.1/all').pipe(
-      finalize(() => this.performanceMonitor.endMeasurement('fetchCountries'))
-    ).subscribe({
+    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe({
       next: (data: any[]) => {
         this.allCountryData = data;
         this.countryData = data;
@@ -267,9 +255,7 @@ export class AppComponent {
     this.availableCurrencies = Array.from(currencies).sort();
   }
 
-  filterCountries(): void {
-    const startTime = performance.now();
-    
+  filterCountries(): void {    
     this.filteredCountryData = this.countryData.filter(country => {
       // Region filter
       if (this.selectedRegion && country.region !== this.selectedRegion) {
@@ -318,8 +304,6 @@ export class AppComponent {
       return true;
     });
 
-    const endTime = performance.now();
-    this.performanceMonitor.trackFiltering(endTime - startTime);
   }
 
   openCountryDetails(country: any): void {

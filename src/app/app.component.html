@@ -18,14 +18,14 @@
         <!-- Search -->
         <mat-form-field class="w-full sm:w-64">
           <mat-label>Search country name...</mat-label>
-          <input matInput [(ngModel)]="searchTerm" (input)="filterByName()">
+          <input matInput [(ngModel)]="searchTerm" (input)="filterCountries()">
           <mat-icon matPrefix>search</mat-icon>
         </mat-form-field>
 
         <!-- Region -->
         <mat-form-field class="w-full sm:w-48">
           <mat-label>Region</mat-label>
-          <mat-select [(ngModel)]="selectedRegion" (selectionChange)="filterByRegion()">
+          <mat-select [(ngModel)]="selectedRegion" (selectionChange)="filterCountries()">
             <mat-option value="">All regions</mat-option>
             <mat-option *ngFor="let region of regionData" [value]="region">
               {{region}}
