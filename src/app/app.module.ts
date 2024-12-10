@@ -21,7 +21,6 @@ import { FooterComponent } from './components/footer/footer.component';
 import { LazyLoadDirective } from './directives/lazy-load.directive';
 import { ImageOptimizationService } from './services/image-optimization.service';
 import { KeyboardNavigationService } from './services/keyboard-navigation.service';
-import { PerformanceMonitorService } from './services/performance-monitor.service';
 
 @NgModule({
   declarations: [
@@ -50,7 +49,6 @@ import { PerformanceMonitorService } from './services/performance-monitor.servic
   ],
   providers: [
     ImageOptimizationService,
-    PerformanceMonitorService,
     KeyboardNavigationService
   ],
   bootstrap: [AppComponent]
