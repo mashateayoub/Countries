@@ -1,44 +1,23 @@
 .country-details-dialog {
   max-width: 900px;
   width: 90vw;
-
-  .info-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    mat-card-header {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      margin-bottom: 0;
-      
-      mat-icon {
-        color: var(--mat-primary-color);
-      }
-    }
-  }
-
-  mat-dialog-content {
-    max-height: 70vh;
-    padding: 0;
-  }
-
-  .mat-mdc-chip {
-    transition: all 0.2s ease;
-    
-    &:hover {
-      transform: translateY(-1px);
-    }
-  }
+  overflow: hidden; /* Prevent internal overflow */
+  box-sizing: border-box;
 }
 
-:host-context(.dark) {
-  .info-card {
-    mat-card-header {
-      border-bottom-color: rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.05);
-    }
+.mat-dialog-content {
+  height: 100%; /* Adjust based on dialog height */
+  overflow: auto; /* Enable scrolling on overflow */
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+  .country-details-dialog {
+    width: 95vw;
   }
-} 
+  .mat-dialog-content {
+    max-height: 80vh;
+  }
+}
