@@ -309,7 +309,6 @@ export class AppComponent {
   openCountryDetails(country: any): void {
     const dialogRef = this.dialog.open(CountryDetailsDialogComponent, {
       data: country,
-      width: '80vw',
       maxWidth: '1200px'
     });
 

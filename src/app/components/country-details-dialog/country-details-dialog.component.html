@@ -1,99 +1,98 @@
+
 <div class="country-details-dialog p-6">
-  <div class="flex items-center justify-between mb-6">
+  <!-- Header Section -->
+  <div class="flex items-center justify-between mb-8 relative">
     <h2 mat-dialog-title class="flex items-center gap-4 m-0">
-      <img [src]="data.flags.png" [alt]="data.name.official" class="w-16 h-12 rounded shadow-sm">
-      <div>
-        <span class="text-2xl font-bold">{{data.name.official}}</span>
-        <span class="text-4xl ml-2">{{data.flag}}</span>
+      <img [src]="data.flags.png" [alt]="data.name.official" class="w-20 h-16 rounded shadow-md border">
+      <div class="flex flex-col">
+        <span class="text-3xl font-extrabold">{{data.name.official}}</span>
+        <!-- Removed the small flag -->
+        <!-- <span class="text-4xl ml-2">{{data.flag}}</span> -->
       </div>
     </h2>
-    <button mat-icon-button (click)="onClose()" class="absolute top-4 right-4">
+    <button mat-icon-button (click)="onClose()" class="absolute top-0 right-0">
       <mat-icon>close</mat-icon>
     </button>
   </div>
 
+  <!-- Dialog Content -->
   <mat-dialog-content class="mat-typography">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Info Cards -->
-      <mat-card class="info-card">
-        <mat-card-header class="bg-primary bg-opacity-10 p-4 rounded-t">
+      <!-- Native Names -->
+      <div class="info-section">
+        <div class="flex items-center text-primary mb-2">
           <mat-icon class="mr-2">translate</mat-icon>
-          <mat-card-title>Native Names</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="p-4">
-          <mat-list dense>
-            <mat-list-item *ngFor="let name of getNativeNames()">
-              {{name}}
-            </mat-list-item>
-          </mat-list>
-        </mat-card-content>
-      </mat-card>
+          <span class="text-lg font-bold">Native Names</span>
+        </div>
+        <mat-list dense>
+          <mat-list-item *ngFor="let name of getNativeNames()" class="text-sm">
+            {{name}}
+          </mat-list-item>
+        </mat-list>
+      </div>
 
-      <mat-card class="info-card">
-        <mat-card-header class="bg-primary bg-opacity-10 p-4 rounded-t">
+      <!-- Currencies -->
+      <div class="info-section">
+        <div class="flex items-center text-primary mb-2">
           <mat-icon class="mr-2">payments</mat-icon>
-          <mat-card-title>Currencies</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="p-4">
-          <mat-list dense>
-            <mat-list-item *ngFor="let currency of getCurrencies()">
-              {{currency}}
-            </mat-list-item>
-          </mat-list>
-        </mat-card-content>
-      </mat-card>
+          <span class="text-lg font-bold">Currencies</span>
+        </div>
+        <mat-list dense>
+          <mat-list-item *ngFor="let currency of getCurrencies()" class="text-sm">
+            {{currency}}
+          </mat-list-item>
+        </mat-list>
+      </div>
 
-      <mat-card class="info-card">
-        <mat-card-header class="bg-primary bg-opacity-10 p-4 rounded-t">
+      <!-- Languages -->
+      <div class="info-section">
+        <div class="flex items-center text-primary mb-2">
           <mat-icon class="mr-2">language</mat-icon>
-          <mat-card-title>Languages</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="p-4">
-          <mat-list dense>
-            <mat-list-item *ngFor="let language of getLanguages()">
-              {{language}}
-            </mat-list-item>
-          </mat-list>
-        </mat-card-content>
-      </mat-card>
+          <span class="text-lg font-bold">Languages</span>
+        </div>
+        <mat-list dense>
+          <mat-list-item *ngFor="let language of getLanguages()" class="text-sm">
+            {{language}}
+          </mat-list-item>
+        </mat-list>
+      </div>
 
-      <mat-card class="info-card">
-        <mat-card-header class="bg-primary bg-opacity-10 p-4 rounded-t">
+      <!-- Time Zones -->
+      <div class="info-section">
+        <div class="flex items-center text-primary mb-2">
           <mat-icon class="mr-2">schedule</mat-icon>
-          <mat-card-title>Time Zones</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="p-4">
-          <mat-list dense>
-            <mat-list-item *ngFor="let timezone of data.timezones">
-              {{timezone}}
-            </mat-list-item>
-          </mat-list>
-        </mat-card-content>
-      </mat-card>
+          <span class="text-lg font-bold">Time Zones</span>
+        </div>
+        <mat-list dense>
+          <mat-list-item *ngFor="let timezone of data.timezones" class="text-sm">
+            {{timezone}}
+          </mat-list-item>
+        </mat-list>
+      </div>
 
-      <mat-card class="info-card col-span-full">
-        <mat-card-header class="bg-primary bg-opacity-10 p-4 rounded-t">
+      <!-- Border Countries -->
+      <div class="info-section col-span-full">
+        <div class="flex items-center text-primary mb-2">
           <mat-icon class="mr-2">public</mat-icon>
-          <mat-card-title>Border Countries</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="p-4">
-          <mat-chip-grid>
-            <mat-chip *ngFor="let border of data.borders" 
+          <span class="text-lg font-bold">Border Countries</span>
+        </div>
+        <mat-chip-grid>
+          <mat-chip *ngFor="let border of data.borders" 
                     (click)="dialogRef.close(border)" 
-                    class="cursor-pointer hover:bg-primary hover:text-white transition-colors">
-              {{border}}
-              <mat-icon matChipTrailingIcon>arrow_forward</mat-icon>
-            </mat-chip>
-          </mat-chip-grid>
-        </mat-card-content>
-      </mat-card>
+                    class="cursor-pointer hover:bg-primary hover:text-white transition-all text-sm font-medium">
+            {{border}}
+            <mat-icon matChipTrailingIcon>arrow_forward</mat-icon>
+          </mat-chip>
+        </mat-chip-grid>
+      </div>
     </div>
 
-    <div class="mt-6 flex justify-center">
-      <button mat-raised-button color="primary" (click)="openGoogleMaps()" class="px-6">
+    <!-- Google Maps Button -->
+    <div class="mt-8 flex justify-center">
+      <button mat-raised-button color="primary" (click)="openGoogleMaps()" class="px-6 py-2 text-lg">
         <mat-icon class="mr-2">map</mat-icon>
         View on Google Maps
       </button>
     </div>
   </mat-dialog-content>
-</div> 
+</div>
