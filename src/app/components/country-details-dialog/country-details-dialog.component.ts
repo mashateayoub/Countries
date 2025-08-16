@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 @Component({
   selector: 'app-country-details-dialog',
   templateUrl: './country-details-dialog.component.html',
-  styleUrls: ['./country-details-dialog.component.scss']
+  styleUrls: ['./country-details-dialog.component.scss'],
 })
 export class CountryDetailsDialogComponent {
   constructor(
@@ -18,7 +18,7 @@ export class CountryDetailsDialogComponent {
 
   getCurrencies(): string[] {
     return Object.entries(this.data.currencies || {}).map(
-      ([code, currency]: [string, any]) => `${currency.name} (${currency.symbol})`
+      ([_, currency]: [string, any]) => `${currency.name} (${currency.symbol})`
     );
   }
 
@@ -36,4 +36,4 @@ export class CountryDetailsDialogComponent {
     const url = `https://www.google.com/maps/place/${this.data.name.official}`;
     window.open(url, '_blank');
   }
-} 
+}
