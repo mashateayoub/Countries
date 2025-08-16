@@ -1,19 +1,25 @@
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, HostBinding, HostListener, Inject, PLATFORM_ID, effect, signal } from '@angular/core';
-import { finalize } from 'rxjs/operators';
+import {
+  Component,
+  HostBinding,
+  HostListener,
+  Inject,
+  PLATFORM_ID,
+  effect,
+  signal,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { CountryDetailsDialogComponent } from './components/country-details-dialog/country-details-dialog.component';
 import { FilterOptions } from './interfaces/filter-options.interface';
 import { ImageOptimizationService } from './services/image-optimization.service';
 import { KeyboardNavigationService } from './services/keyboard-navigation.service';
-import { MatDialog } from '@angular/material/dialog';
-import { CountryDetailsDialogComponent } from './components/country-details-dialog/country-details-dialog.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.less']
+  styleUrls: ['./app.component.less'],
 })
-
 export class AppComponent {
   public pageSize = 20;
   public currentPage = 0;
@@ -29,9 +35,9 @@ export class AppComponent {
   }
 
   regionData: any;
-  selectedRegion: String = "";
-  searchTerm: String = "";
-  filteredCountryData: any
+  selectedRegion: string = '';
+  searchTerm: string = '';
+  filteredCountryData: any;
 
   public isScrolling = false;
   private scrollTimeout: any;
@@ -43,7 +49,7 @@ export class AppComponent {
     areaRange: { min: 0, max: Number.MAX_SAFE_INTEGER },
     languages: [],
     currencies: [],
-    regions: []
+    regions: [],
   };
 
   availableLanguages: string[] = [];
@@ -54,7 +60,7 @@ export class AppComponent {
   constructor(
     private http: HttpClient,
     private imageOptimizer: ImageOptimizationService,
-    @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(PLATFORM_ID) private platformId: object,
     public keyboardNav: KeyboardNavigationService,
     private dialog: MatDialog
   ) {
@@ -66,15 +72,16 @@ export class AppComponent {
   @HostListener('window:scroll', ['$event'])
   onScroll(): void {
     if (isPlatformBrowser(this.platformId)) {
-      const currentScroll = window.scrollY || document.documentElement.scrollTop;
+      const currentScroll =
+        window.scrollY || document.documentElement.scrollTop;
       this.isScrollingDown = currentScroll > this.lastScrollTop;
       this.isScrolling = true;
-      
+
       clearTimeout(this.scrollTimeout);
       this.scrollTimeout = setTimeout(() => {
         this.isScrolling = false;
       }, 150);
-      
+
       this.lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
 
       const windowHeight = window.innerHeight;
@@ -88,30 +95,28 @@ export class AppComponent {
 
   private loadMoreCountries(): void {
     const start = this.currentPage * this.pageSize;
-    const end = start + this.pageSize;
-    
+
     if (start < this.allCountryData.length) {
-      this.countryData = [
-        ...this.countryData,
-      ];
+      this.countryData = [...this.countryData];
       this.currentPage++;
       this.filterCountries();
     }
   }
-
-
 
   formatNumberWithCommas(number: number): string {
     // Convert the number to a string and split it into integer and decimal parts
     const [integerPart, decimalPart] = number.toString().split('.');
 
     // Add commas to the integer part
-    const formattedIntegerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const formattedIntegerPart = integerPart.replace(
+      /\B(?=(\d{3})+(?!\d))/g,
+      ','
+    );
 
     // Combine the integer part and decimal part (if exists)
     const formattedNumber = decimalPart
-        ? `${formattedIntegerPart}.${decimalPart}`
-        : formattedIntegerPart;
+      ? `${formattedIntegerPart}.${decimalPart}`
+      : formattedIntegerPart;
 
     return formattedNumber;
   }
@@ -132,18 +137,23 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
-    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe({
-      next: (data: any[]) => {
-        this.allCountryData = data;
-        this.countryData = data;
-        this.extractAvailableFilters();
-        this.extractDistinctRegions();
-        this.filterCountries();
-      },
-      error: (error) => {
-        console.error('Error fetching country data:', error);
-      }
-    });
+    this.http
+      .get<any[]>(
+        'https://restcountries.com/v3.1/all?fields=name,flags,languages,capital,region,population,currencies,timezones,borders,cca3 '
+      )
+      .subscribe({
+        next: (data: any[]) => {
+          this.allCountryData = data;
+          this.countryData = data;
+          this.extractAvailableFilters();
+          this.extractDistinctRegions();
+          this.filterCountries();
+          console.log(data[0]);
+        },
+        error: (error) => {
+          console.error('Error fetching country data:', error);
+        },
+      });
   }
 
   getTitle(): string {
@@ -160,10 +170,10 @@ export class AppComponent {
     const formattedName = countryName
       .replace(/\s+/g, '_')
       .replace(/[^a-zA-Z0-9_]/g, '');
-    
+
     // Construct Wikipedia URL
     const wikipediaUrl = `https://en.wikipedia.org/wiki/${formattedName}`;
-    
+
     // Open in new tab
     window.open(wikipediaUrl, '_blank');
   }
@@ -193,7 +203,9 @@ export class AppComponent {
         case 'Enter':
           const selectedIndex = this.keyboardNav.getSelectedIndex();
           if (selectedIndex >= 0 && this.filteredCountryData[selectedIndex]) {
-            this.openWikipedia(this.filteredCountryData[selectedIndex].name.official);
+            this.openWikipedia(
+              this.filteredCountryData[selectedIndex].name.official
+            );
           }
           break;
         case 'Escape':
@@ -206,7 +218,7 @@ export class AppComponent {
   private navigateCountries(delta: number): void {
     const currentIndex = this.keyboardNav.getSelectedIndex();
     const newIndex = currentIndex + delta;
-    
+
     if (newIndex >= 0 && newIndex < this.filteredCountryData.length) {
       this.keyboardNav.setSelectedIndex(newIndex);
       this.scrollToCountry(newIndex);
@@ -216,7 +228,10 @@ export class AppComponent {
   private scrollToCountry(index: number): void {
     const countryCards = document.querySelectorAll('mat-card');
     if (countryCards[index]) {
-      countryCards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      countryCards[index].scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
     }
   }
 
@@ -228,7 +243,7 @@ export class AppComponent {
       areaRange: { min: 0, max: Number.MAX_SAFE_INTEGER },
       languages: [],
       currencies: [],
-      regions: []
+      regions: [],
     };
     this.filterCountries();
   }
@@ -237,17 +252,19 @@ export class AppComponent {
     const languages = new Set<string>();
     const currencies = new Set<string>();
 
-    this.allCountryData.forEach(country => {
+    this.allCountryData.forEach((country) => {
       // Extract languages
       if (country.languages) {
-        Object.values(country.languages).forEach(lang => 
-          languages.add(lang as string));
+        Object.values(country.languages).forEach((lang) =>
+          languages.add(lang as string)
+        );
       }
-      
+
       // Extract currencies
       if (country.currencies) {
-        Object.keys(country.currencies).forEach(currency => 
-          currencies.add(currency));
+        Object.keys(country.currencies).forEach((currency) =>
+          currencies.add(currency)
+        );
       }
     });
 
@@ -255,8 +272,8 @@ export class AppComponent {
     this.availableCurrencies = Array.from(currencies).sort();
   }
 
-  filterCountries(): void {    
-    this.filteredCountryData = this.countryData.filter(country => {
+  filterCountries(): void {
+    this.filteredCountryData = this.countryData.filter((country) => {
       // Region filter
       if (this.selectedRegion && country.region !== this.selectedRegion) {
         return false;
@@ -273,8 +290,8 @@ export class AppComponent {
       // Population range filter
       const population = country.population || 0;
       if (this.filterOptions.populationRange.length > 0) {
-        const matchesAnyRange = this.filterOptions.populationRange.some(range => 
-          population >= range.min && population <= range.max
+        const matchesAnyRange = this.filterOptions.populationRange.some(
+          (range) => population >= range.min && population <= range.max
         );
         if (!matchesAnyRange) {
           return false;
@@ -283,38 +300,47 @@ export class AppComponent {
 
       // Languages filter
       if (this.filterOptions.languages.length > 0) {
-        const countryLanguages = country.languages ? 
-          Object.values(country.languages) : [];
-        if (!this.filterOptions.languages.some(lang => 
-          countryLanguages.includes(lang))) {
+        const countryLanguages = country.languages
+          ? Object.values(country.languages)
+          : [];
+        if (
+          !this.filterOptions.languages.some((lang) =>
+            countryLanguages.includes(lang)
+          )
+        ) {
           return false;
         }
       }
 
       // Currencies filter
       if (this.filterOptions.currencies.length > 0) {
-        const countryCurrencies = country.currencies ? 
-          Object.keys(country.currencies) : [];
-        if (!this.filterOptions.currencies.some(curr => 
-          countryCurrencies.includes(curr))) {
+        const countryCurrencies = country.currencies
+          ? Object.keys(country.currencies)
+          : [];
+        if (
+          !this.filterOptions.currencies.some((curr) =>
+            countryCurrencies.includes(curr)
+          )
+        ) {
           return false;
         }
       }
 
       return true;
     });
-
   }
 
   openCountryDetails(country: any): void {
     const dialogRef = this.dialog.open(CountryDetailsDialogComponent, {
       data: country,
-      maxWidth: '1200px'
+      maxWidth: '1200px',
     });
 
-    dialogRef.afterClosed().subscribe(borderCode => {
+    dialogRef.afterClosed().subscribe((borderCode) => {
       if (borderCode) {
-        const borderCountry = this.allCountryData.find(c => c.cca3 === borderCode);
+        const borderCountry = this.allCountryData.find(
+          (c) => c.cca3 === borderCode
+        );
         if (borderCountry) {
           this.openCountryDetails(borderCountry);
         }

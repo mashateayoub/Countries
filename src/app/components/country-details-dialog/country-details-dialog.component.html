@@ -1,11 +1,14 @@
-
 <div class="country-details-dialog p-6">
   <!-- Header Section -->
   <div class="flex items-center justify-between mb-8 relative">
     <h2 mat-dialog-title class="flex items-center gap-4 m-0">
-      <img [src]="data.flags.png" [alt]="data.name.official" class="w-20 h-16 rounded shadow-md border">
+      <img
+        [src]="data.flags.png"
+        [alt]="data.name.official"
+        class="w-20 h-16 rounded shadow-md border"
+      />
       <div class="flex flex-col">
-        <span class="text-3xl font-extrabold">{{data.name.official}}</span>
+        <span class="text-3xl font-extrabold">{{ data.name.official }}</span>
         <!-- Removed the small flag -->
         <!-- <span class="text-4xl ml-2">{{data.flag}}</span> -->
       </div>
@@ -26,7 +29,7 @@
         </div>
         <mat-list dense>
           <mat-list-item *ngFor="let name of getNativeNames()" class="text-sm">
-            {{name}}
+            {{ name }}
           </mat-list-item>
         </mat-list>
       </div>
@@ -38,8 +41,11 @@
           <span class="text-lg font-bold">Currencies</span>
         </div>
         <mat-list dense>
-          <mat-list-item *ngFor="let currency of getCurrencies()" class="text-sm">
-            {{currency}}
+          <mat-list-item
+            *ngFor="let currency of getCurrencies()"
+            class="text-sm"
+          >
+            {{ currency }}
           </mat-list-item>
         </mat-list>
       </div>
@@ -51,8 +57,11 @@
           <span class="text-lg font-bold">Languages</span>
         </div>
         <mat-list dense>
-          <mat-list-item *ngFor="let language of getLanguages()" class="text-sm">
-            {{language}}
+          <mat-list-item
+            *ngFor="let language of getLanguages()"
+            class="text-sm"
+          >
+            {{ language }}
           </mat-list-item>
         </mat-list>
       </div>
@@ -64,8 +73,11 @@
           <span class="text-lg font-bold">Time Zones</span>
         </div>
         <mat-list dense>
-          <mat-list-item *ngFor="let timezone of data.timezones" class="text-sm">
-            {{timezone}}
+          <mat-list-item
+            *ngFor="let timezone of data.timezones"
+            class="text-sm"
+          >
+            {{ timezone }}
           </mat-list-item>
         </mat-list>
       </div>
@@ -76,20 +88,27 @@
           <mat-icon class="mr-2">public</mat-icon>
           <span class="text-lg font-bold">Border Countries</span>
         </div>
-        <mat-chip-grid>
-          <mat-chip *ngFor="let border of data.borders" 
-                    (click)="dialogRef.close(border)" 
-                    class="cursor-pointer hover:bg-primary hover:text-white transition-all text-sm font-medium">
-            {{border}}
+        <mat-chip-set>
+          <mat-chip
+            *ngFor="let border of data.borders"
+            (click)="dialogRef.close(border)"
+            class="cursor-pointer hover:bg-primary hover:text-white transition-all text-sm font-medium"
+          >
+            {{ border }}
             <mat-icon matChipTrailingIcon>arrow_forward</mat-icon>
           </mat-chip>
-        </mat-chip-grid>
+        </mat-chip-set>
       </div>
     </div>
 
     <!-- Google Maps Button -->
     <div class="mt-8 flex justify-center">
-      <button mat-raised-button color="primary" (click)="openGoogleMaps()" class="px-6 py-2 text-lg">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="openGoogleMaps()"
+        class="px-6 py-2 text-lg"
+      >
         <mat-icon class="mr-2">map</mat-icon>
         View on Google Maps
       </button>
