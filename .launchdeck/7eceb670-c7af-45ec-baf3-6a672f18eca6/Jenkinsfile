@@ -31,7 +31,11 @@ pipeline {
             npm ci
             npm run lint --if-present
             npm run typecheck --if-present
-            npm run test --if-present
+            if node -e 'process.exit((require("./package.json").scripts || {})["test:ci"] ? 0 : 1)'; then
+              npm run test:ci
+            else
+              CI=true npm run test --if-present
+            fi
           fi
         '''
       }
