@@ -6,16 +6,18 @@
 
 4. Reserve host port 3000 for this project and configure Caddy or Nginx with HTTPS to proxy your domain to 127.0.0.1:3000. Add a domain in project settings to have Launchdeck configure Caddy automatically.
 
-5. Provide the dedicated SSH private key and verified known_hosts entry. Verify the host fingerprint through a trusted channel; do not blindly trust ssh-keyscan output. Allow SSH from your Jenkins agent network. Jenkins must have a Docker-enabled build agent with the launchdeck-docker label; do not run builds on the Jenkins controller.
+5. Launchdeck does not create AWS instances. Install the Jenkins controller on a separate x86_64 VM using the Launchdeck deploy/jenkins installer, then finish the Jenkins setup wizard. That installer also registers the Docker-enabled launchdeck-docker agent in a separate container and sets controller executors to zero.
 
-6. Launchdeck stores the SSH key and verified known_hosts entry as project-specific Jenkins credentials and configures a Pipeline job to read the Jenkinsfile from the selected GitHub branch. GitHub access is used only to browse the repository and create the reviewed setup pull request.
+6. Provide the dedicated SSH private key and verified known_hosts entry. Verify the host fingerprint through a trusted channel; do not blindly trust ssh-keyscan output. Allow SSH from the Jenkins agent network.
 
-7. The setup PR removes this project's generated GitHub Actions deployment workflow so only Jenkins deploys it after the merge.
+7. Launchdeck stores the SSH key and verified known_hosts entry as project-specific Jenkins credentials and configures a Pipeline job to read the Jenkinsfile from the selected GitHub branch. GitHub access is used only to browse the repository and create the reviewed setup pull request.
 
-8. Review and merge the setup PR into main. The Jenkins job polls the selected production branch every two minutes.
+8. The setup PR removes this project's generated GitHub Actions deployment workflow so only Jenkins deploys it after the merge.
 
-9. Public Next.js build variables are baked into the image. Add needed build arguments to your Dockerfile and generated build step before merging. Do not include runtime secrets in the build context; maintain .dockerignore.
+9. Review and merge the setup PR into main. The Jenkins job polls the selected production branch every two minutes.
 
-10. Jenkins builds the Docker image on its agent and transfers it directly to EC2 over the verified SSH connection, so no GitHub Actions runner or container registry is required. The EC2 host retains prior images for rollback. A single container replacement can briefly interrupt service.
+10. Public Next.js build variables are baked into the image. Add needed build arguments to your Dockerfile and generated build step before merging. Do not include runtime secrets in the build context; maintain .dockerignore.
 
-11. Jenkins requires the Pipeline, Git, Folders, SSH Credentials, Credentials Binding and Plain Credentials plugins. Configure the controller URL/user/API token in Launchdeck's server environment and keep Jenkins on HTTPS.
+11. Jenkins builds the Docker image on its agent and transfers it directly to EC2 over the verified SSH connection, so no GitHub Actions runner or container registry is required. The EC2 host retains prior images for rollback. A single container replacement can briefly interrupt service.
+
+12. The Jenkins controller image installs Pipeline, Git, Folders, SSH Credentials, Credentials Binding and Plain Credentials. Connect it in Launchdeck Settings using its HTTPS URL, a dedicated API service user and API token; the token is encrypted at rest.

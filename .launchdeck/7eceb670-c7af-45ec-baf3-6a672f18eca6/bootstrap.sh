@@ -30,12 +30,13 @@ case "$id" in
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     ;;
   amzn)
-    if [[ $version == 2* ]]; then
+    if [[ $version == 2 || $version == 2.* ]]; then
       command -v amazon-linux-extras >/dev/null || fail "Amazon Linux Extras is unavailable."
       sudo amazon-linux-extras install docker -y
       sudo yum install -y curl util-linux iproute bash
     elif [[ $version == 2023* ]]; then
-      sudo dnf install -y docker curl util-linux iproute bash
+      sudo dnf install -y docker util-linux iproute bash
+      command -v curl >/dev/null || sudo dnf install -y curl-minimal
     else
       fail "unsupported Amazon Linux version: $version"
     fi
@@ -45,7 +46,7 @@ case "$id" in
       trap 'rm -f "$tmp" "$checksums"' EXIT
       curl -fsSL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$arch" -o "$tmp"
       curl -fsSL https://github.com/docker/compose/releases/latest/download/checksums.txt -o "$checksums"
-      expected="$(awk -v file="docker-compose-linux-$arch" '$2 == file { print $1; exit }' "$checksums")"
+      expected="$(awk -v file="docker-compose-linux-$arch" '$2 == file || $2 == "*" file { print $1; exit }' "$checksums")"
       [[ $expected =~ ^[a-f0-9]{64}$ ]] || fail "could not verify the Docker Compose download checksum."
       printf '%s  %s\n' "$expected" "$tmp" | sha256sum --check --status || fail "Docker Compose checksum verification failed."
       sudo install -D -m 0755 "$tmp" /usr/local/lib/docker/cli-plugins/docker-compose
