@@ -62,6 +62,39 @@ fi
 sudo systemctl enable --now docker
 sudo usermod -aG docker "$(id -un)"
 
+proxy_dir="$HOME/.launchdeck/proxy"
+mkdir -p "$proxy_dir/sites" "$proxy_dir/data" "$proxy_dir/config"
+exec 8>"$proxy_dir/bootstrap.lock"
+flock -w 300 8
+if [[ ! -f "$proxy_dir/compose.yaml" ]]; then
+  if sudo ss -ltnH | awk '$4 ~ /:80$/ || $4 ~ /:443$/ { found=1 } END { exit !found }'; then
+    fail "ports 80 or 443 are already in use. Configure the existing reverse proxy for countries.mashateayoub.com to 127.0.0.1:3000, then remove the Launchdeck proxy bootstrap from this project."
+  fi
+  cat >"$proxy_dir/compose.yaml" <<'COMPOSE'
+services:
+  caddy:
+    image: caddy:2-alpine
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./sites:/etc/caddy/sites:ro
+      - ./data:/data
+      - ./config:/config
+COMPOSE
+  cat >"$proxy_dir/Caddyfile" <<'CADDY'
+import /etc/caddy/sites/*.caddy
+CADDY
+fi
+cat >"$proxy_dir/sites/7eceb670-c7af-45ec-baf3-6a672f18eca6.caddy.tmp" <<'SITE'
+countries.mashateayoub.com {
+  reverse_proxy 127.0.0.1:3000
+}
+SITE
+mv "$proxy_dir/sites/7eceb670-c7af-45ec-baf3-6a672f18eca6.caddy.tmp" "$proxy_dir/sites/7eceb670-c7af-45ec-baf3-6a672f18eca6.caddy"
+sudo docker compose --project-name launchdeck-proxy --project-directory "$proxy_dir" --file "$proxy_dir/compose.yaml" up -d
+sudo docker compose --project-name launchdeck-proxy --project-directory "$proxy_dir" --file "$proxy_dir/compose.yaml" exec -T caddy caddy reload --config /etc/caddy/Caddyfile
+
 sudo install -d -m 0750 -o "$(id -un)" -g "$(id -gn)" "$HOME/.launchdeck/7eceb670-c7af-45ec-baf3-6a672f18eca6"
 sudo docker compose version >/dev/null
 command -v curl >/dev/null || fail "curl installation failed."

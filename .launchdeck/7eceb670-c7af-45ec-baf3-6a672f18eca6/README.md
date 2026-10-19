@@ -4,7 +4,7 @@
 
 3. On EC2 create $HOME/.launchdeck/7eceb670-c7af-45ec-baf3-6a672f18eca6/.env.production with runtime secrets before the first deploy (chmod 600). Deployment preserves this file. Your app must listen on 0.0.0.0:80 inside the container and return HTTP 2xx or 3xx from /.
 
-4. Reserve host port 3000 for this project and configure Caddy or Nginx with HTTPS to proxy your domain to 127.0.0.1:3000. Add a domain in project settings to have Launchdeck configure Caddy automatically.
+4. The first deployment automatically configures a shared Caddy reverse proxy for https://countries.mashateayoub.com to 127.0.0.1:3000. Point DNS to this EC2 instance and allow inbound ports 80 and 443. If those ports are already used by another proxy, configure that proxy manually instead.
 
 5. Launchdeck does not create AWS instances. Install the Jenkins controller on a separate x86_64 VM using the Launchdeck deploy/jenkins installer, then finish the Jenkins setup wizard. That installer also registers the Docker-enabled launchdeck-docker agent in a separate container and sets controller executors to zero.
 
