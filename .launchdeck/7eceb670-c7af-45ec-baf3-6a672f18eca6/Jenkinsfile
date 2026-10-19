@@ -1,6 +1,6 @@
 pipeline {
   agent { label 'launchdeck-docker' }
-  options { disableConcurrentBuilds(); timeout(time: 30, unit: 'MINUTES'); timestamps() }
+  options { disableConcurrentBuilds(); timeout(time: 30, unit: 'MINUTES') }
   parameters { string(name: 'ROLLBACK_SHA', defaultValue: '', description: 'Optional full commit SHA of an image already deployed by Launchdeck') }
   environment {
     IMAGE_REF = ''
