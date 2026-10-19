@@ -3,7 +3,6 @@ pipeline {
   options { disableConcurrentBuilds(); timeout(time: 30, unit: 'MINUTES') }
   parameters { string(name: 'ROLLBACK_SHA', defaultValue: '', description: 'Optional full commit SHA of an image already deployed by Launchdeck') }
   environment {
-    IMAGE_REF = ''
     SSH_HOST = 'ec2-13-60-169-45.eu-north-1.compute.amazonaws.com'
     SSH_USER = 'ec2-user'
     SSH_PORT = '22'
