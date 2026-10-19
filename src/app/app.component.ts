@@ -139,7 +139,7 @@ export class AppComponent {
   ngOnInit(): void {
     this.http
       .get<any[]>(
-        'https://restcountries.com/v3.1/all?fields=name,flags,languages,capital,region,population,currencies,timezones,borders,cca3 '
+        'https://restcountries.com/v5/all?fields=name,flags,languages,capital,region,population,currencies,timezones,borders,cca3 '
       )
       .subscribe({
         next: (data: any[]) => {
