@@ -68,7 +68,7 @@ pipeline {
             printf '%s\\n' "$KNOWN_HOSTS" > "$WORKSPACE/.launchdeck-ssh/known_hosts"
             SSH_OPTS="-i $SSH_KEY -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$WORKSPACE/.launchdeck-ssh/known_hosts -o ConnectTimeout=20"
             STAGING="${BUILD_NUMBER}-${BUILD_NUMBER}"
-            if [[ -z "$ROLLBACK_SHA" ]]; then
+            if [[ -z "${ROLLBACK_SHA:-}" ]]; then
               docker save "$IMAGE_REF" | ssh $SSH_OPTS -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" 'docker load'
             fi
             ssh $SSH_OPTS -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "bash $DEPLOY_DIR/.incoming-$STAGING/deploy.sh '$DEPLOY_SHA' '$STAGING'"
